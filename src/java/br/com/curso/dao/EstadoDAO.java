@@ -60,12 +60,53 @@ public class EstadoDAO implements GenericDAO {
 
     @Override
     public Boolean alterar(Object objeto) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
+        Estado oEstado = (Estado) objeto;
+        PreparedStatement stmt = null;
+        String sql = "update estado set nomeestado=?,siglaestado=? where idestado=?";
+        try {
+            stmt = conexao.prepareStatement(sql);
+            stmt.setString(1, oEstado.getNomeEstado());
+            stmt.setString(2, oEstado.getSiglaEstado());
+            stmt.setInt(3, oEstado.getIdEstado());
+            stmt.execute();
+            conexao.commit();
+            return true;
+        } catch (Exception ex) {
+            try {
+                System.out.println("Problemas ao alterar a Estado! Erro: "+ex.getMessage());
+                ex.printStackTrace();
+                conexao.rollback();
+            } catch (SQLException e) {
+                System.out.println("Erro:"+e.getMessage());
+                e.printStackTrace();
+            }
+            return false;
+            }
+        }
 
     @Override
     public Boolean excluir(int numero) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        int idEstado = numero;
+        PreparedStatement stmt= null;
+        
+        String sql = "delete from estado where idestado=?";
+        try {
+            stmt = conexao.prepareStatement(sql);
+            stmt.setInt(1, idEstado);
+            stmt.execute();
+            conexao.commit();
+            return true;
+        } catch (Exception ex) {
+            System.out.println("Problemas ao excluir a Estado! Erro: "
+                    +ex.getMessage());
+            try {
+                conexao.rollback();
+            } catch (SQLException e) {
+                System.out.println("Erro rolback "+e.getMessage());
+                e.printStackTrace();
+            }
+            return false;
+        }
     }
 
     @Override
